@@ -8,7 +8,7 @@ urlpatterns = [
 	url(r'^admin/', include(admin.site.urls)),
 	# url(r'^$', 'InsurApp.views.home_page', name='login'),
 	#url(r'^$', 'InsurApp.views.login_user', name='home'),
-	url(r'^home/$', 'InsurApp.views.home_page', name='login'),
+	url(r'^frontlinehome/$', 'InsurApp.views.home_page_frontline', name='frontlinehome'),
     url(r'^$', 'InsurApp.views.login_user'),
 
   ]

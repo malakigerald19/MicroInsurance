@@ -9,7 +9,7 @@ from .models import Branch
 
 
 class SignUpAdmin(admin.ModelAdmin):
-	list_display = ("__str__","timestamp","updated")
+	list_display = ("__str__","usertype","timestamp","updated")
 	class Meta:
 		model = MicroInsuranceUsers
 
