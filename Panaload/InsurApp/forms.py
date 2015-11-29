@@ -30,6 +30,17 @@ class LoginForm(forms.ModelForm):
 		user = authenticate(username=username, password=password)
 		return user
 
+class AvailInsuranceForm(forms.ModelForm):
+	firstname = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter First Name'}))
+	middlename = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Middle Name'}))
+	lastname = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Last Name'}))
+	contactno = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Contact No.'}))
+
+
+	class Meta:
+		model = MicroInsuranceUsers
+
+
 
 
 	

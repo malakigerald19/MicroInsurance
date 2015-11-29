@@ -59,6 +59,7 @@ class Insurance(models.Model):
 	InsuranceValidity = models.IntegerField(verbose_name="Insurance Validity(days):",blank=False)
 	InsuranceAgeMin = models.IntegerField(verbose_name="Minimum Age:",blank=False,validators=[MinValueValidator(18),
                                        MaxValueValidator(115)])
+	InsurancePolicy = models.TextField(verbose_name = "Insurance Policy:",blank=False,default='')
 	InsuranceAgeMax = models.IntegerField(verbose_name="Maximum Age:", blank=False)
 	InsuranceLimit = models.IntegerField(verbose_name="Limit Per Person:",blank=False)
 	InsuranceEffectiveFrom = models.DateField(verbose_name="Valid From:",default=datetime.date.today,blank=False)
@@ -115,6 +116,10 @@ class Branch(models.Model):
 
 	def __str__(self):
 		return self.BranchName
+
+class CustomerAvail(models.Model):
+	CustomerFName = models.CharField(verbose_name="First Name:", max_length = 50, blank=False)
+	CustomerMname = models.CharField(verbose_name="Middle Name:", max_length = 50, blank = False)
 
 
 
