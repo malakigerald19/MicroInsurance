@@ -45,8 +45,9 @@ class Insurance(models.Model):
 	InsuranceValidity = models.IntegerField(verbose_name="Insurance Validity(days):",blank=False)
 	InsuranceAgeMin = models.IntegerField(verbose_name="Minimum Age:",blank=False,validators=[MinValueValidator(18),
                                        MaxValueValidator(115)])
-	InsurancePolicy = models.TextField(verbose_name = "Insurance Policy:",blank=False,default='')
+	
 	InsuranceAgeMax = models.IntegerField(verbose_name="Maximum Age:", blank=False)
+	InsurancePolicy = models.TextField(verbose_name = "Insurance Policy:",blank=False,default='')
 	InsuranceLimit = models.IntegerField(verbose_name="Limit Per Person:",blank=False)
 	InsuranceEffectiveFrom = models.DateField(verbose_name="Valid From:",default=datetime.date.today,blank=False)
 	InsuranceEffectiveTo = models.DateField(verbose_name="Valid To:",blank=False,default=get_deadline)
@@ -105,12 +106,12 @@ class Branch(models.Model):
 
 class CustomerAvail(models.Model):
 	phone_regex = RegexValidator(regex=r'^(09|\+639|)\d{9}$', message="Phone number must be entered in the format: '+639xxxxxxxxx'. Up to 13 digits allowed.")
-	CustomerFName = models.CharField(verbose_name="First Name:", max_length = 50, blank=False )
-	CustomerMName = models.CharField(verbose_name="Middle Name:", max_length = 50,blank=True,null=True)
-	CustomerLName = models.CharField(verbose_name="Last Name:", max_length = 50, blank = False)
-	CustomerContactNo = models.CharField(verbose_name="Contact No:",max_length=13,blank=False,validators=[phone_regex],default='')
+	CustomerFName = models.CharField(verbose_name="First Name", max_length = 50, blank=False )
+	CustomerMName = models.CharField(verbose_name="Middle Name", max_length = 50,blank=True,null=True)
+	CustomerLName = models.CharField(verbose_name="Last Name", max_length = 50, blank = False)
+	CustomerContactNo = models.CharField(verbose_name="Contact No",max_length=13,blank=False,validators=[phone_regex],default='')
 	InsuranceApplied = models.ForeignKey(Insurance,default='',verbose_name="Insurance Applied:",null=True)
-	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+	timestamp = models.DateTimeField(verbose_name="Date Registered",auto_now_add=True, auto_now=False)
 	updated = models.DateTimeField(auto_now_add=False, auto_now=True,null=True)
 	branch = models.ForeignKey(Branch,default='',verbose_name="Branch",blank=True,null=True)
 

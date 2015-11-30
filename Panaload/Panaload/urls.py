@@ -9,6 +9,7 @@ urlpatterns = [
 	# url(r'^$', 'InsurApp.views.home_page', name='login'),
 	#url(r'^$', 'InsurApp.views.login_user', name='home'),
 	url(r'^frontlinehome/$', 'InsurApp.views.home_page_frontline', name='frontlinehome'),
+	url(r'^managerhome/$', 'InsurApp.views.home_page_manager', name='managerhome'),
     url(r'^$', 'InsurApp.views.login_user'),
 
   ]

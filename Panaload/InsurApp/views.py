@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .forms import LoginForm, AvailInsuranceForm
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from .models import MicroInsuranceUsers, CustomerAvail,Insurance
+from .models import MicroInsuranceUsers, CustomerAvail,Insurance,Branch
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
@@ -17,12 +17,20 @@ from django.db.models import Q
 from django.core.exceptions import ValidationError
 from .models import Insurance
 from django import forms
-
+import django_tables2 as tables
 BRANCH = ""
 username =""
 FRONTLINAME =""
+UNDERWRITER=""
+MANAGER =""
     # no object satisfying query exists
 insuranceapplied= None
+
+class ManagerTableView(tables.Table):
+    class Meta:
+        model = CustomerAvail
+        fields = ('CustomerFName','CustomerLName')
+        attrs = {'class': 'table table-hover'}
 def login_user(request):
     state = "Please log in below..."
 
@@ -30,7 +38,16 @@ def login_user(request):
     password = request.POST.get('password')
     form = LoginForm(request.POST or None)
     if MicroInsuranceUsers.objects.filter( username = username, password = password ,status ='A', usertype = 'M').exists():
-    	return HttpResponseRedirect('/managerhome/')
+        GET_BRANCH = MicroInsuranceUsers.objects.select_related().filter(username = username, password = password, status ='A', usertype = 'M')
+        for branchname in GET_BRANCH:
+            print (branchname.branch)
+            BRANCH = branchname.branch
+        for managername in GET_BRANCH:
+            print (managername.name)
+            MANAGER = managername.name
+        request.session['branch'] = str(BRANCH)
+        request.session['mname'] = str(MANAGER)
+        return HttpResponseRedirect('/managerhome/')
     elif MicroInsuranceUsers.objects.filter(username = username, password = password, status ='A', usertype = 'F').exists():
         result = []
         GET_BRANCH = MicroInsuranceUsers.objects.select_related().filter(username = username, password = password, status ='A', usertype = 'F')
@@ -46,6 +63,11 @@ def login_user(request):
 
         return HttpResponseRedirect('/frontlinehome/')
     elif MicroInsuranceUsers.objects.filter(username = username, password = password, status ='A', usertype = 'U').exists():
+        GET_UNDERWRITER = MicroInsuranceUsers.objects.select_related().filter(username = username, password = password, status ='A', usertype = 'U')
+        for underwriter in GET_UNDERWRITER:
+            print (underwriter.underwriter)
+            UNDERWRITER = underwriter.underwriter
+        request.session['underwriter'] = str(UNDERWRITER)
         return HttpResponseRedirect('/underwriterhome/')
     		#return render(request,"homepage.html")
     return render_to_response('login.html',{'state':state, 'username': username, 'form': form},context_instance=RequestContext(request))
@@ -61,8 +83,8 @@ def home_page_frontline(request):
     holder = "--Choose Insurance Here--"
     error = "•Please Choose an Insurance"
     limit =""
-    BRANCHNAME =  request.session['token']
-    FRONTLINE = request.session['name']
+    BRANCHNAME =  "BRANCH NAME:  " + request.session['token']
+    FRONTLINE = "WELCOME " + request.session['name'] + "!"
     if insuranceapplied == holder:
        print("A")
     else:
@@ -90,6 +112,22 @@ def home_page_frontline(request):
     return render_to_response('homepage.html', {'form': form, 'insurance_list': insurance_list , 'error': error, 'limit': limit, 'BRANCH': BRANCHNAME, 'NAME': FRONTLINE},context_instance=RequestContext(request))
 	# return render_to_response('homepage.html',{'form': form},context_instance=RequestContext(request))
 
+def home_page_manager(request):
+    Bid =""
+    MBRANCH = "BRANCH NAME:  " + request.session['branch'] + "!"
+    MNAME = "WELCOME " + request.session['mname'] +"!"
+    branchn = request.session['branch']
+    GET_BRANCHpk = Branch.objects.select_related().filter(BranchName = branchn)
+    for brnch in GET_BRANCHpk:
+         print (brnch.id)
+    Bid = brnch.id
+
+
+    managerquery  = CustomerAvail.objects.select_related().filter(branch=Bid)
+    table = ManagerTableView(managerquery)
+    table.as_html()
+
+    return render_to_response('homepagemanager.html',{'MBRANCH':MBRANCH,'MNAME': MNAME ,'table': table},context_instance=RequestContext(request))
 
 # def request_page(request):
 # 	title = "Page"

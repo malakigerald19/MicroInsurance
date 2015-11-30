@@ -66,7 +66,7 @@
                     <li><a href="#">One more separated link</a></li>
 
                   </ul>
-<li><a href="#"> {{ BRANCH }}</a> </li>
+<li><a href="#"> {{ MBRANCH }}</a> </li>
                 </li>
 
               </ul>
@@ -75,11 +75,12 @@
           </div><!--/.container-fluid -->
         </nav>
         <form class="form-add-insurance" action="" method="post">
-        <p> WELCOME {{ NAME }} </p>
-         {% csrf_token %}
+        <p> {{ MNAME }} </p>
+      
  
 <div class="jumbotron">
-
+{% load django_tables2 %}
+{% render_table table %}
 <!-- {% endif % -->
          <!-- Main component for a primary marketing message or call to action -->
 
@@ -90,35 +91,10 @@
            <br>
          
             
-           <label for="male">Insurance:        </label>
-               <ul class='form-errors'>
-    {{ error }}
+ 
         
     </ul>
-           <label for="sel1">Select list (select one):</label>
-           <select name="insurances" class="form-control" id="sel1">
-
-            <option>--Choose Insurance Here--</option>
-           {% for t in insurance_list %}
            
-            <option>{{ t }}</option>
-
-         
-          {% endfor %}
-           </select>
-          <!-- <div class="dropdown"> -->
-
- <!--  <input name="insurances" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" value="--CHoose Insurance">
-  <span class="caret"></span></button>
-   {% for t in insurance_list %}
-  <ul class="dropdown-menu">
-    <li><a href="#">{{ t }}</a></li>
-
-    {% endfor %}
-  </ul>
-
--->
-<br><button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
 </div>
 
 
