@@ -29,7 +29,7 @@ insuranceapplied= None
 class ManagerTableView(tables.Table):
     class Meta:
         model = CustomerAvail
-        fields = ('CustomerFName','CustomerLName')
+        fields = ('CustomerFName' ,'CustomerLName', 'CustomerMName' , 'InsuranceApplied')
         attrs = {'class': 'table table-hover'}
 def login_user(request):
     state = "Please log in below..."
@@ -117,7 +117,7 @@ def home_page_manager(request):
     MBRANCH = "BRANCH NAME:  " + request.session['branch'] + "!"
     MNAME = "WELCOME " + request.session['mname'] +"!"
     branchn = request.session['branch']
-    GET_BRANCHpk = Branch.objects.select_related().filter(BranchName = branchn)
+    GET_BRANCHpk = Branch.objects.filter(BranchName = branchn).select_related()
     for brnch in GET_BRANCHpk:
          print (brnch.id)
     Bid = brnch.id
