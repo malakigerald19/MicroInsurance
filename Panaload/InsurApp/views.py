@@ -18,18 +18,32 @@ from django.core.exceptions import ValidationError
 from .models import Insurance
 from django import forms
 
-BRANCH = None
+BRANCH = ""
+username =""
+FRONTLINAME =""
     # no object satisfying query exists
 insuranceapplied= None
 def login_user(request):
     state = "Please log in below..."
+
     username = request.POST.get('username')
     password = request.POST.get('password')
     form = LoginForm(request.POST or None)
     if MicroInsuranceUsers.objects.filter( username = username, password = password ,status ='A', usertype = 'M').exists():
     	return HttpResponseRedirect('/managerhome/')
     elif MicroInsuranceUsers.objects.filter(username = username, password = password, status ='A', usertype = 'F').exists():
-        BRANCH = MicroInsuranceUsers.objects.filter(InsuranceSKU=availedinsurance).values_list('InsuranceLimit').first()
+        result = []
+        GET_BRANCH = MicroInsuranceUsers.objects.select_related().filter(username = username, password = password, status ='A', usertype = 'F')
+        for branchname in GET_BRANCH:
+            print (branchname.branch)
+            BRANCH = branchname.branch
+        for frontlinename in GET_BRANCH:
+            print (frontlinename.name)
+            FRONTLINAME = frontlinename.name
+        request.session['token'] = str(BRANCH)
+        request.session['name'] = str (FRONTLINAME)
+
+
         return HttpResponseRedirect('/frontlinehome/')
     elif MicroInsuranceUsers.objects.filter(username = username, password = password, status ='A', usertype = 'U').exists():
         return HttpResponseRedirect('/underwriterhome/')
@@ -37,7 +51,6 @@ def login_user(request):
     return render_to_response('login.html',{'state':state, 'username': username, 'form': form},context_instance=RequestContext(request))
 
 def home_page_frontline(request):
-
     form = AvailInsuranceForm(data=request.POST )
     firstname = request.POST.get('firstname')
     middlename = request.POST.get('middlename')
@@ -48,6 +61,8 @@ def home_page_frontline(request):
     holder = "--Choose Insurance Here--"
     error = "•Please Choose an Insurance"
     limit =""
+    BRANCHNAME =  request.session['token']
+    FRONTLINE = request.session['name']
     if insuranceapplied == holder:
        print("A")
     else:
@@ -72,7 +87,7 @@ def home_page_frontline(request):
                 customeravail.save()
                 form = AvailInsuranceForm()
 
-    return render_to_response('homepage.html', {'form': form, 'insurance_list': insurance_list , 'error': error, 'limit': limit},context_instance=RequestContext(request))
+    return render_to_response('homepage.html', {'form': form, 'insurance_list': insurance_list , 'error': error, 'limit': limit, 'BRANCH': BRANCHNAME, 'NAME': FRONTLINE},context_instance=RequestContext(request))
 	# return render_to_response('homepage.html',{'form': form},context_instance=RequestContext(request))
 
 

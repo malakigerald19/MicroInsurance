@@ -53,6 +53,7 @@
                 <li class="active"><a href="#">Home</a></li>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
+
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                   <ul class="dropdown-menu">
@@ -63,15 +64,20 @@
                     <li class="dropdown-header">Nav header</li>
                     <li><a href="#">Separated link</a></li>
                     <li><a href="#">One more separated link</a></li>
+
                   </ul>
+<li><a href="#"> BRANCH NAME: {{ BRANCH }}</a> </li>
                 </li>
+
               </ul>
 
             </div><!--/.nav-collapse -->
           </div><!--/.container-fluid -->
         </nav>
         <form class="form-add-insurance" action="" method="post">
+        <p> WELCOME {{ NAME }} </p>
          {% csrf_token %}
+ 
 <div class="jumbotron">
 
 <!-- {% endif % -->

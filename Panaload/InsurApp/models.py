@@ -128,6 +128,7 @@ class MicroInsuranceUsers(models.Model):
 	password = models.CharField(max_length=120,blank=False)
 	status = models.CharField(verbose_name="Status",max_length=10,choices=STATUS,default="Active")
 	usertype = models.CharField(max_length=120,blank=False,choices=USRTYPE)
+	name = models.CharField(max_length=120,blank="False",null=False, verbose_name="Name")
 	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
 	updated = models.DateTimeField(auto_now_add=False, auto_now=True,null=True)
 	branch = models.ForeignKey(Branch,default='',verbose_name="Branch",null=True,blank=True)
