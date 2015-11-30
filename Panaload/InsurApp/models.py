@@ -18,21 +18,7 @@ USRTYPE = (
         ('U', 'UnderWriter'),
 
 )
-class MicroInsuranceUsers(models.Model):
-	username = models.CharField(max_length=120,blank=False)
-	password = models.CharField(max_length=120,blank=False)
-	status = models.CharField(verbose_name="Status",max_length=10,choices=STATUS,default="Active")
-	usertype = models.CharField(max_length=120,blank=False,choices=USRTYPE)
-	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
-	updated = models.DateTimeField(auto_now_add=False, auto_now=True,null=True)
 
-
-	def __str__(self):
-		return self.username
-
-	class Meta:
-		verbose_name_plural = "Micro Insurance Users"
-		ordering = ('id',)
 
 class UnderWriter(models.Model):
 	
@@ -46,7 +32,7 @@ class UnderWriter(models.Model):
 
 	class Meta:
 		verbose_name_plural ='Under Writers'
-		# unique_together = ('UnderWriterName','UnderWriterAddress','UnderWriterContactNo')
+		unique_together = ('UnderWriterName','UnderWriterAddress','UnderWriterContactNo')
 		ordering = ('id',)
 
 class Insurance(models.Model):
@@ -118,9 +104,43 @@ class Branch(models.Model):
 		return self.BranchName
 
 class CustomerAvail(models.Model):
-	CustomerFName = models.CharField(verbose_name="First Name:", max_length = 50, blank=False)
-	CustomerMname = models.CharField(verbose_name="Middle Name:", max_length = 50, blank = False)
+	phone_regex = RegexValidator(regex=r'^(09|\+639|)\d{9}$', message="Phone number must be entered in the format: '+639xxxxxxxxx'. Up to 13 digits allowed.")
+	CustomerFName = models.CharField(verbose_name="First Name:", max_length = 50, blank=False )
+	CustomerMName = models.CharField(verbose_name="Middle Name:", max_length = 50,blank=True,null=True)
+	CustomerLName = models.CharField(verbose_name="Last Name:", max_length = 50, blank = False)
+	CustomerContactNo = models.CharField(verbose_name="Contact No:",max_length=13,blank=False,validators=[phone_regex],default='')
+	InsuranceApplied = models.ForeignKey(Insurance,default='',verbose_name="Insurance Applied:",null=True)
+	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+	updated = models.DateTimeField(auto_now_add=False, auto_now=True,null=True)
+	branch = models.ForeignKey(Branch,default='',verbose_name="Branch",blank=True,null=True)
 
+	class Meta:
+		verbose_name_plural = "Customer Info and Insurances"
+		ordering = ('id',)
+		# unique_together = ('CustomerFName','CustomerMName','CustomerLName','InsuranceApplied')
+
+
+	def __str__(self):
+		return (self.CustomerFName + ' ' + self.CustomerMName + ' ' + self.CustomerLName)
+
+class MicroInsuranceUsers(models.Model):
+	username = models.CharField(max_length=120,blank=False)
+	password = models.CharField(max_length=120,blank=False)
+	status = models.CharField(verbose_name="Status",max_length=10,choices=STATUS,default="Active")
+	usertype = models.CharField(max_length=120,blank=False,choices=USRTYPE)
+	timestamp = models.DateTimeField(auto_now_add=True, auto_now=False)
+	updated = models.DateTimeField(auto_now_add=False, auto_now=True,null=True)
+	branch = models.ForeignKey(Branch,default='',verbose_name="Branch",null=True,blank=True)
+	underwriter = models.ForeignKey(UnderWriter,verbose_name="UnderWriter",default='',null=True,blank=True)
+	
+
+
+	def __str__(self):
+		return self.username
+
+	class Meta:
+		verbose_name_plural = "Micro Insurance Users"
+		ordering = ('id',)
 
 
 

@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login
 from .models import UnderWriter
 from .models import Insurance
 from .models import Branch
+from .models import CustomerAvail
+# from .views import home_page_frontline
 # from .models import Employee
 
 class LoginForm(forms.ModelForm):
@@ -32,15 +34,21 @@ class LoginForm(forms.ModelForm):
 
 class AvailInsuranceForm(forms.ModelForm):
 	firstname = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter First Name'}))
-	middlename = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Middle Name'}))
+	middlename = forms.CharField(required = False,widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Middle Name'}))
 	lastname = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Last Name'}))
 	contactno = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Contact No.'}))
 
 
+
 	class Meta:
-		model = MicroInsuranceUsers
+		model = CustomerAvail
+		fields = ['firstname','middlename','lastname','contactno']
 
-
-
+	# def __init__(self, *args, **kwargs):
+	# 	print(insuranceapplied)
+	# def clean(self):
+	# def __init__(self, *args, **kwargs):
+ #        other_variable = kwargs.pop('other_variable')
+ #        super(MyForm, self).__init__(*args, **kwargs)
 
 	
