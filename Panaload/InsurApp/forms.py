@@ -5,6 +5,8 @@ from .models import UnderWriter
 from .models import Insurance
 from .models import Branch
 from .models import CustomerAvail
+from functools import partial
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 # from .views import home_page_frontline
 # from .models import Employee
 
@@ -37,12 +39,12 @@ class AvailInsuranceForm(forms.ModelForm):
 	middlename = forms.CharField(required = False,widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Middle Name'}))
 	lastname = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Last Name'}))
 	contactno = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Contact No.'}))
-
-
+	
 
 	class Meta:
 		model = CustomerAvail
 		fields = ['firstname','middlename','lastname','contactno']
+
 
 	# def __init__(self, *args, **kwargs):
 	# 	print(insuranceapplied)

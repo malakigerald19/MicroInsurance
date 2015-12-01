@@ -38,6 +38,7 @@ def login_user(request):
     password = request.POST.get('password')
     form = LoginForm(request.POST or None)
     if MicroInsuranceUsers.objects.filter( username = username, password = password ,status ='A', usertype = 'M').exists():
+         
         GET_BRANCH = MicroInsuranceUsers.objects.select_related().filter(username = username, password = password, status ='A', usertype = 'M')
         for branchname in GET_BRANCH:
             print (branchname.branch)
@@ -99,13 +100,17 @@ def home_page_frontline(request):
             print (insuranceSKULimit[0])
             # int1 , int2 = insuranceSKULimit
             chklimit = CustomerAvail.objects.filter(CustomerFName=firstname,CustomerMName=middlename,CustomerLName=lastname,CustomerContactNo=contactno,InsuranceApplied=availedinsurance).count()
-            print(chklimit)
+            # print(chklimit + "6")
 
             if chklimit >= insuranceSKULimit[0]:
                 limit = "Insurance Limit has been reached!"
             else:
+                brnchname = request.session['token']
+
+                GET_BRANCHpk = Branch.objects.get(BranchName=brnchname)
+
                 limit =""
-                customeravail = CustomerAvail(CustomerFName=firstname,CustomerMName=middlename,CustomerLName=lastname,CustomerContactNo=contactno,InsuranceApplied=availedinsurance)
+                customeravail = CustomerAvail(CustomerFName=firstname,CustomerMName=middlename,CustomerLName=lastname,CustomerContactNo=contactno,InsuranceApplied=availedinsurance,branch=GET_BRANCHpk)
                 customeravail.save()
                 form = AvailInsuranceForm()
 
@@ -117,7 +122,7 @@ def home_page_manager(request):
     MBRANCH = "BRANCH NAME:  " + request.session['branch'] + "!"
     MNAME = "WELCOME " + request.session['mname'] +"!"
     branchn = request.session['branch']
-    GET_BRANCHpk = Branch.objects.filter(BranchName = branchn).select_related()
+    GET_BRANCHpk = Branch.objects.filter(BranchName = branchn)
     for brnch in GET_BRANCHpk:
          print (brnch.id)
     Bid = brnch.id
