@@ -59,21 +59,3 @@
     });
 })(django.jQuery);
 
-// (function($) {
-//     $(function() {
-//         var selectField = $('#id_usertype'),
-//             verified = $('#id_branch');
-
-//         function toggleVerified(value) {
-            
-//         }
-
-//         // show/hide on load based on pervious value of selectField
-//         toggleVerified(selectField.val());
-
-//         // show/hide on change
-//         selectField.change(function() {
-//             toggleVerified($(this).val());
-//         });
-//     });
-// })(django.jQuery);

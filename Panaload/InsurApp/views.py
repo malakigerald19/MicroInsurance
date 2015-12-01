@@ -74,7 +74,7 @@ def login_user(request):
     return render_to_response('login.html',{'state':state, 'username': username, 'form': form},context_instance=RequestContext(request))
 
 def home_page_frontline(request):
-    form = AvailInsuranceForm(data=request.POST )
+    form = AvailInsuranceForm(data=request.POST)
     firstname = request.POST.get('firstname')
     middlename = request.POST.get('middlename')
     lastname = request.POST.get('lastname')               
