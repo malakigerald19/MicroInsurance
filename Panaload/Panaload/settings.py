@@ -38,7 +38,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'InsurApp',
-    'django_tables2'
+    'django_tables2',
+    'bootstrap3_datetime',
+    'django_bootstrap_datetimepicker',
+    
 
 )
 

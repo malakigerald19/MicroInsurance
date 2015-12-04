@@ -1,3 +1,5 @@
+
+from bootstrap3_datetime.widgets import DateTimePicker
 from django import forms
 from .models import MicroInsuranceUsers
 from django.contrib.auth import authenticate, login
@@ -6,7 +8,8 @@ from .models import Insurance
 from .models import Branch
 from .models import CustomerAvail
 from functools import partial
-DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+import datetime
+import re
 # from .views import home_page_frontline
 # from .models import Employee
 
@@ -18,7 +21,7 @@ class LoginForm(forms.ModelForm):
 
 	class Meta: 
 		model = MicroInsuranceUsers
-		fields = ['username','password']
+		fields = ['username','password'] 
 
 	def clean(self):
 		username = self.cleaned_data.get('username')
@@ -35,15 +38,30 @@ class LoginForm(forms.ModelForm):
 		return user
 
 class AvailInsuranceForm(forms.ModelForm):
+	DATE_FORMATS = [
+    '%Y-%m-%dT%H:%M:%S-%z',
+	]
 	firstname = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter First Name'}))
 	middlename = forms.CharField(required = False,widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Middle Name'}))
 	lastname = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Last Name'}))
 	contactno = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Contact No.'}))
-	
+	date = forms.DateField(
+          widget=DateTimePicker(options={"format": "YYYY-MM-DD",
+                                         "pickTime": False}))
+	error_css_class = 'error'
 
 	class Meta:
 		model = CustomerAvail
-		fields = ['firstname','middlename','lastname','contactno']
+		fields = ['firstname','middlename','lastname','contactno','date']
+
+	def clean(self):
+		contactno = self.cleaned_data.get('contactno')
+		if re.match('^(09|\+639|)\d{9}$',contactno): 
+			print (contactno)
+			# raise forms.ValidationError("Password should be a combination of Alphabets and Numbers")
+		else:
+			raise forms.ValidationError("Contact Number must be entered in the format: '+639xxxxxxxxx'. Up to 13 digits allowed.")
+		return contactno
 
 
 	# def __init__(self, *args, **kwargs):

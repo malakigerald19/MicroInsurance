@@ -16,8 +16,10 @@ from django.template import Context
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from .models import Insurance
+from datetime import datetime
 from django import forms
 import django_tables2 as tables
+import math
 BRANCH = ""
 username =""
 FRONTLINAME =""
@@ -59,7 +61,7 @@ def login_user(request):
             print (frontlinename.name)
             FRONTLINAME = frontlinename.name
         request.session['token'] = str(BRANCH)
-        request.session['name'] = str (FRONTLINAME)
+        request.session['name'] = str(FRONTLINAME)
 
 
         return HttpResponseRedirect('/frontlinehome/')
@@ -74,20 +76,23 @@ def login_user(request):
     return render_to_response('login.html',{'state':state, 'username': username, 'form': form},context_instance=RequestContext(request))
 
 def home_page_frontline(request):
-    form = AvailInsuranceForm(data=request.POST)
+    form = AvailInsuranceForm(data=request.POST or None)
     firstname = request.POST.get('firstname')
     middlename = request.POST.get('middlename')
     lastname = request.POST.get('lastname')               
     contactno = request.POST.get('contactno')
     insurance_list = Insurance.objects.all()
+    bday = request.POST.get('date')
     insuranceapplied = request.POST.get('insurances')
     holder = "--Choose Insurance Here--"
-    error = "•Please Choose an Insurance"
+    errormsg = "•Please Choose an Insurance"
     limit =""
+    age_error = ""
+    # age_above_max=""
     BRANCHNAME =  "BRANCH NAME:  " + request.session['token']
     FRONTLINE = "WELCOME " + request.session['name'] + "!"
     if insuranceapplied == holder:
-       print("A")
+       print("")
     else:
         error = ""
         if form.is_valid():
@@ -97,13 +102,25 @@ def home_page_frontline(request):
             contactno = request.POST.get('contactno')
             availedinsurance= Insurance.objects.get(InsuranceSKU=insuranceapplied)
             insuranceSKULimit = Insurance.objects.filter(InsuranceSKU=availedinsurance).values_list('InsuranceLimit').first()
-            print (insuranceSKULimit[0])
             # int1 , int2 = insuranceSKULimit
             chklimit = CustomerAvail.objects.filter(CustomerFName=firstname,CustomerMName=middlename,CustomerLName=lastname,CustomerContactNo=contactno,InsuranceApplied=availedinsurance).count()
-            # print(chklimit + "6")
-
-            if chklimit >= insuranceSKULimit[0]:
-                limit = "Insurance Limit has been reached!"
+            agelimit = Insurance.objects.filter(InsuranceSKU=insuranceapplied)
+            for age in agelimit:
+                age_min = age.InsuranceAgeMin
+                age_max = age.InsuranceAgeMax
+            bday = datetime.strptime(str(bday), "%m/%d/%Y")
+            # diff = datetime.utcnow() - datetime.strptime(str(bday), "%m/%d/%Y")
+            diff2 = (datetime.today() - bday).days/365
+            real_age = math.ceil(diff2*100)/100
+            print (real_age)
+            if (chklimit >= insuranceSKULimit[0]) or (real_age < age_min) or (real_age > age_max):
+                if (chklimit >= insuranceSKULimit[0]):
+                    limit = "Insurance Limit has been reached!"
+                if (real_age < age_min) or (real_age > age_max):
+                    if(real_age<age_min):
+                        age_error = "Age is less than the Minimum Age"
+                    else:
+                        age_error = "Age is greater than Maximum Age"
             else:
                 brnchname = request.session['token']
 
@@ -114,7 +131,7 @@ def home_page_frontline(request):
                 customeravail.save()
                 form = AvailInsuranceForm()
 
-    return render_to_response('homepage.html', {'form': form, 'insurance_list': insurance_list , 'error': error, 'limit': limit, 'BRANCH': BRANCHNAME, 'NAME': FRONTLINE},context_instance=RequestContext(request))
+    return render_to_response('homepage.html', {'age_error': age_error,'form': form, 'insurance_list': insurance_list , 'errormsg': errormsg, 'limit': limit, 'BRANCH': BRANCHNAME, 'NAME': FRONTLINE},context_instance=RequestContext(request))
 	# return render_to_response('homepage.html',{'form': form},context_instance=RequestContext(request))
 
 def home_page_manager(request):
