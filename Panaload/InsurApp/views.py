@@ -13,11 +13,12 @@ from django.shortcuts import render_to_response
 from django.contrib.auth import authenticate, login
 from django.shortcuts import get_object_or_404, render
 from django.template import Context
-from django.db.models import Q
+from django.db.models import Q,Count
 from django.core.exceptions import ValidationError
 from .models import Insurance
 from datetime import datetime
 from django import forms
+
 import django_tables2 as tables
 import math
 BRANCH = ""
@@ -29,10 +30,13 @@ MANAGER =""
 insuranceapplied= None
 
 class ManagerTableView(tables.Table):
+    selection = tables.CheckBoxColumn(accessor="pk", attrs = { "th__input": 
+                                        {"onclick": "toggle(this)"}},
+                                        orderable=False)
     class Meta:
         model = CustomerAvail
-        fields = ('CustomerFName' ,'CustomerLName', 'CustomerMName' , 'InsuranceApplied')
-        attrs = {'class': 'table table-hover'}
+        fields = ('selection','CustomerFName' ,'CustomerLName', 'CustomerMName' , 'InsuranceApplied','num_products')
+        attrs = {'class': 'table table-bordered'}
 def login_user(request):
     state = "Please log in below..."
 
@@ -143,10 +147,14 @@ def home_page_manager(request):
     for brnch in GET_BRANCHpk:
          print (brnch.id)
     Bid = brnch.id
-
+    # values_list('name', flat=True).distinct()
+    # .values_list('name', flat=True).distinct()
+# order_by('pub_date').distinct('pub_date')
+# isit.objects.filter(myothertable__field=x).values("ip_address").distinct().count()
 
     managerquery  = CustomerAvail.objects.select_related().filter(branch=Bid)
-    table = ManagerTableView(managerquery)
+    a = CustomerAvail.objects.filter(branch=Bid).select_related('InsuranceApplied')
+    table = ManagerTableView(a)
     table.as_html()
 
     return render_to_response('homepagemanager.html',{'MBRANCH':MBRANCH,'MNAME': MNAME ,'table': table},context_instance=RequestContext(request))

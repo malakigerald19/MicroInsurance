@@ -1,5 +1,4 @@
 
-from bootstrap3_datetime.widgets import DateTimePicker
 from django import forms
 from .models import MicroInsuranceUsers
 from django.contrib.auth import authenticate, login
@@ -10,15 +9,17 @@ from .models import CustomerAvail
 from functools import partial
 import datetime
 import re
+from functools import partial
 # from .views import home_page_frontline
 # from .models import Employee
-
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 class LoginForm(forms.ModelForm):
 
 	username = forms.CharField( widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Username'}))
 
 	password = forms.CharField(widget=forms.PasswordInput(attrs={'class ':'form-control','placeholder' : 'Enter Password'}))
-
+	
+	
 	class Meta: 
 		model = MicroInsuranceUsers
 		fields = ['username','password'] 
@@ -45,14 +46,14 @@ class AvailInsuranceForm(forms.ModelForm):
 	middlename = forms.CharField(required = False,widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Middle Name'}))
 	lastname = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Enter Last Name'}))
 	contactno = forms.CharField(widget=forms.TextInput(attrs={'class ':'form-control','placeholder' : 'Contact No.'}))
-	date = forms.DateField(
-          widget=DateTimePicker(options={"format": "YYYY-MM-DD",
-                                         "pickTime": False}))
+	# date = forms.DateField(
+ #          widget=DateTimePicker(options={"format": "YYYY-MM-DD",
+ #                                         "pickTime": False}))
 	error_css_class = 'error'
 
 	class Meta:
 		model = CustomerAvail
-		fields = ['firstname','middlename','lastname','contactno','date']
+		fields = ['firstname','middlename','lastname','contactno']
 
 	def clean(self):
 		contactno = self.cleaned_data.get('contactno')
@@ -62,7 +63,13 @@ class AvailInsuranceForm(forms.ModelForm):
 		else:
 			raise forms.ValidationError("Contact Number must be entered in the format: '+639xxxxxxxxx'. Up to 13 digits allowed.")
 		return contactno
-
+	def __init__(self, *args, **kwargs):
+	    super(AvailInsuranceForm, self).__init__(*args, **kwargs)
+	    self.fields['firstname'].label = "First Name:"
+	    self.fields['middlename'].label = "Middle Name:"
+	    self.fields['lastname'].label = "Last Name:"
+	    self.fields['contactno'].label = "Contact No:"
+	    # self.fields['firstname'].label = "First Name:"
 
 	# def __init__(self, *args, **kwargs):
 	# 	print(insuranceapplied)

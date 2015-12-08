@@ -34,19 +34,13 @@
     </head>
 
     <body>
- <div class="container">
-        <div class="row">
-            <div class="col-lg-8">
-          <form id="main">
-            <input type="text">
-          </form>
-          <script>
-           $('#main input').datepicker({
-             });
-          </script>
-        </div>
-      </div>
-    </div>
+<script language="JavaScript">
+function toggle(source) {
+    checkboxes = document.getElementsByName('selection');
+    for(var i in checkboxes)
+        checkboxes[i].checked = source.checked;
+}
+</script>
       <div class="container">
 
         <!-- Static navbar -->
